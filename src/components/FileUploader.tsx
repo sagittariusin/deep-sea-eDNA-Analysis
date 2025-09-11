@@ -277,7 +277,7 @@ const FileUploader: React.FC = () => {
                 ref={inputRef}
                 type="file"
                 onChange={handleFileSelect}
-                accept=".jpg,.jpeg,.png,.fasta,.txt,.fa"
+                accept=".jpg,.jpeg,.png,.fasta,.txt,.fa,.tar,.sqlite3"
                 className="hidden"
                 id="file-upload"
               />

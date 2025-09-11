@@ -1,8 +1,11 @@
+// Header.tsx
 import React, { useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // <-- add this
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate(); // <-- hook
 
   const navItems = [
     { label: 'Data', hasDropdown: true },
@@ -10,6 +13,10 @@ const Header: React.FC = () => {
     { label: 'Resources', hasDropdown: true },
     { label: 'About', hasDropdown: true }
   ];
+
+  const goToLogin = () => {
+    navigate('/login');
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -37,15 +44,19 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
-              Species ID
+            <button
+              onClick={goToLogin}            // <-- navigate on click
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+            >
+              Login
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -60,8 +71,16 @@ const Header: React.FC = () => {
                   {item.label}
                 </button>
               ))}
-              <button className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium w-fit">
-                Species ID
+
+              {/* Mobile Login button navigates to /login too */}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  goToLogin();
+                }}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium w-fit"
+              >
+                Login
               </button>
             </div>
           </div>

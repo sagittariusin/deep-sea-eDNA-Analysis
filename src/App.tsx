@@ -1,25 +1,20 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import WorldMap from './components/WorldMap';
-import DataPortal from './components/DataPortal';
-import ProcessOverview from './components/ProcessOverview';
-import FileUploader from './components/FileUploader';
-import Footer from './components/Footer';
+import Home from './components/Home';
+import LoginWrapper from './components/LoginWrapper';  // Import the wrapper
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <BrowserRouter>
       <Header />
       <main>
-        <Hero />
-        <WorldMap />
-        <DataPortal />
-        <ProcessOverview />
-        <FileUploader />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginWrapper />} />  {/* Use the wrapper here */}
+        </Routes>
       </main>
-      <Footer />
-    </div>
+    </BrowserRouter>
   );
 }
 
