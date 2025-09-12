@@ -283,7 +283,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:items-start gap-10">
           <div className="lg:w-1/3 flex-shrink-0">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-3xl font-extrabold text-yellow-400 tracking-tight">BOLD</span>
+              <span className="text-3xl font-extrabold text-yellow-400 tracking-tight">SAGITARRIUS</span>
               <span className="text-2xl font-semibold text-white">SYSTEMS</span>
             </div>
             <p className="text-gray-300 max-w-xs">
@@ -291,7 +291,7 @@ const Footer: React.FC = () => {
             </p>
 
             <div className="flex items-center gap-3 mt-6">
-              <a href="#" className="p-2 rounded-md bg-blue-700 text-white hover:opacity-90">
+              <a href="https://github.com/sagittariusin" className="p-2 rounded-md bg-blue-700 text-white hover:opacity-90">
                 <Github className="w-5 h-5" />
               </a>
               <a href="#" className="p-2 rounded-md bg-blue-700 text-white hover:opacity-90">
@@ -352,20 +352,20 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center gap-3 text-gray-300">
               <MapPin className="w-5 h-5 text-yellow-400" />
-              <span>Centre for Biodiversity, Global Campus</span>
+              <span>Hindusthan college of engineering and technology, Coimbatore</span>
             </div>
             <div className="flex items-center gap-3 text-gray-300">
               <Phone className="w-5 h-5 text-yellow-400" />
-              <span>+1 (555) 123-4567</span>
+              <span>+91 7305096778</span>
             </div>
             <div className="flex items-center gap-3 text-gray-300">
               <Mail className="w-5 h-5 text-yellow-400" />
-              <span>info@boldsystems.org</span>
+              <span>sagittarius3in@gmail.com</span>
             </div>
           </div>
 
           <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm">© 2025 BOLDSYSTEMS. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">© 2025 Sagittarius. All rights reserved.</p>
             <p className="text-gray-400 text-sm">Advancing biodiversity science through DNA-based species identification.</p>
           </div>
         </div>
