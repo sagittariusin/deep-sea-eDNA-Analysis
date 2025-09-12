@@ -1,20 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
+import { AuthContext } from './AuthContext';
 
 type LoginPayload = { name: string; email: string };
 
 const LoginWrapper: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = React.useContext(AuthContext)!;  // use context
 
   const handleLogin = (userData: LoginPayload) => {
-    console.log('Logged in as:', userData);
-    // Save user data to context or localStorage as needed
-    navigate('/');  // Redirect to home after login
+    login(userData);        // ✅ save user in context
+    navigate('/');          // ✅ redirect to home
   };
 
   const handleClose = () => {
-    navigate('/');  // Navigate back to home if login is closed
+    navigate('/');          // ✅ close → go home
   };
 
   return <LoginPage onLogin={handleLogin} onClose={handleClose} />;

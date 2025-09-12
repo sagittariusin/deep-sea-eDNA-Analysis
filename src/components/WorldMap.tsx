@@ -97,7 +97,11 @@ export default function WorldMap() {
             colorClass: s.colorClass ?? s.color_class ?? "bg-teal-500",
             densityType: (s.densityType as Location["densityType"]) ?? s.density_type ?? "low",
             speciesCount: Number(s.speciesCount ?? s.species_count ?? 0),
-            speciesName: s.speciesName ?? s.scientific_name ?? s.scientificName ?? (s.species ? (typeof s.species === "string" ? s.species : s.species.binomial) : undefined),
+            speciesName:
+              s.speciesName ??
+              s.scientific_name ??
+              s.scientificName ??
+              (s.species ? (typeof s.species === "string" ? s.species : s.species.binomial) : undefined),
             commonName: s.commonName ?? s.common_name ?? s.common ?? undefined,
             taxonomy,
             populationCount: s.populationCount ?? s.population_count ?? s.pop_count ?? undefined,
@@ -137,13 +141,15 @@ export default function WorldMap() {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* LEFT: real Leaflet map */}
+          {/* LEFT: real Leaflet map (spans two columns) */}
           <div className="lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
-              className="h-[420px] md:h-[520px] lg:h-[640px] rounded-2xl overflow-hidden shadow-2xl border"
+              // reduced height + slight downward offset (10px)
+              className="h-[420px] md:h-[520px] lg:h-[640px] rounded-2xl overflow-hidden shadow-2xl border w-full max-w-none"
+              style={{ marginTop: 10 }}
             >
               <MapContainer
                 whenCreated={(mapInstance) => (mapRef.current = mapInstance)}

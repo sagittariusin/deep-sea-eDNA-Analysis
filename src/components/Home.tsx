@@ -4,15 +4,26 @@ import WorldMap from './WorldMap'
 import DataPortal from './DataPortal'
 import ProcessOverview from './ProcessOverview'
 import FileUploader from './FileUploader'
+import Footer from './Footer'
+import ImageGallery from './ImageGallery'
+import DataStats from './DataStats'
+import Research from './Research'
+import DnaExtraction from './DnaExtraction'
+import ProcessSection from './ProcessSection'
+
 
 const Home = () => {
   return (
     <div>
         <Hero/>
         <WorldMap/>
-        <DataPortal/>
+        <Research/>
+        <ImageGallery/>
+        <ProcessSection/>
+        <DataStats/>
         <ProcessOverview/>
         <FileUploader/>
+        <Footer/>
     </div>
   )
 }
