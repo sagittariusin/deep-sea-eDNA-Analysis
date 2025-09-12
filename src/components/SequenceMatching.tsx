@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import ProcessFlowDiagram from './ProcessFlowDiagram';
 import InteractiveDiagram from './InteractiveDiagram';
+import DnaLoader from './Dnaloading';
 
 type MatchingStep = {
   title: string;
@@ -129,35 +130,42 @@ const SequenceMatching: React.FC = (): JSX.Element => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 to-pink-600 py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-            <Link
-              to={createPageUrl('Home')}
-              className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-8"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Overview
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
-          >
-            <div className="w-24 h-24 mx-auto mb-6 bg-white/20 rounded-2xl flex items-center justify-center">
-              <Target className="w-12 h-12 text-white" />
+    <div className="min-h-screen bg-slate-900 text-white mt-5">
+      {/* DNA-themed Hero */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-teal-900/25 to-slate-900/60" />
+        <div className="relative z-10 py-20">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-8">
+            <div className="w-full md:w-1/3 flex justify-center">
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/6 backdrop-blur-md">
+                <DnaLoader size={180} />
+              </div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">Sequence Matching</h1>
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              The final step - identifying species through database comparison
-            </p>
-          </motion.div>
+
+            <div className="w-full md:w-2/3 text-center md:text-left">
+              <div className="mb-3 text-sm text-teal-300 font-semibold">Sequence Matching</div>
+              <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-cyan-200 to-white">
+                Sequence Matching
+              </h1>
+              <p className="mt-4 text-lg text-slate-200/90 max-w-2xl">
+                The final step — identifying species through database comparison. Visualize BLAST matches,
+                compare identity & coverage, and explore likely taxonomic matches.
+              </p>
+              <div className="mt-6">
+                <Link
+                  to={createPageUrl('Home')}
+                  className="inline-flex items-center gap-2 text-slate-100/90 hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  Back to Overview
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* decorative blurred radial highlight */}
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-28 w-96 h-96 rounded-full bg-gradient-to-br from-teal-600/30 to-cyan-400/10 blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -169,9 +177,9 @@ const SequenceMatching: React.FC = (): JSX.Element => {
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-slate-300 text-lg leading-relaxed">
-                Sequence matching is the computational process of comparing an unknown DNA sequence 
-                against vast databases of known sequences. This critical step transforms raw genetic 
-                data into meaningful biological identification, enabling species discovery and classification.
+                Sequence matching is the computational process of comparing an unknown DNA sequence against
+                vast databases of known sequences. This critical step transforms raw genetic data into
+                meaningful biological identification, enabling species discovery and classification.
               </p>
 
               <div className="grid md:grid-cols-4 gap-6 mt-8">
@@ -221,7 +229,7 @@ const SequenceMatching: React.FC = (): JSX.Element => {
                   <h4 className="text-xl font-bold text-red-400 mb-4">Identity vs Coverage</h4>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <ScatterChart>
+                      <ScatterChart data={blastResults}>
                         <CartesianGrid strokeDasharray="3,3" stroke="#334155" />
                         <XAxis
                           type="number"
@@ -238,10 +246,10 @@ const SequenceMatching: React.FC = (): JSX.Element => {
                           label={{ value: 'Identity (%)', angle: -90, position: 'insideLeft' }}
                         />
                         <Tooltip
-                          contentStyle={{ backgroundColor: '#1E293B', border: '1px solid #475569' }}
+                          contentStyle={{ backgroundColor: '#0f1724', border: '1px solid #475569' }}
                           formatter={(value: any, name: string) => {
                             if (name === 'identity') return [`${value}%`, 'Identity'];
-                            return [value, 'Coverage'];
+                            return [value, name === 'coverage' ? 'Coverage' : name];
                           }}
                         />
                         <Scatter name="Matches" data={blastResults} dataKey="identity" fill="#EF4444" />
@@ -257,7 +265,7 @@ const SequenceMatching: React.FC = (): JSX.Element => {
                       key={index}
                       initial={{ opacity: 0, x: 30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      transition={{ delay: index * 0.06 }}
                       className="p-4 bg-slate-900 rounded-lg"
                     >
                       <div className="flex justify-between items-center mb-2">
@@ -298,15 +306,11 @@ const SequenceMatching: React.FC = (): JSX.Element => {
                 </div>
                 <div className="p-4 bg-slate-900 rounded-lg">
                   <h4 className="font-bold text-red-400 mb-2">BOLD Systems</h4>
-                  <p className="text-slate-300 text-sm">
-                    Specialized DNA barcode reference library focused on species identification
-                  </p>
+                  <p className="text-slate-300 text-sm">Specialized DNA barcode reference library focused on species identification</p>
                 </div>
                 <div className="p-4 bg-slate-900 rounded-lg">
                   <h4 className="font-bold text-red-400 mb-2">UNITE</h4>
-                  <p className="text-slate-300 text-sm">
-                    Molecular identification database specifically for fungi and other eukaryotes
-                  </p>
+                  <p className="text-slate-300 text-sm">Molecular identification database specifically for fungi and other eukaryotes</p>
                 </div>
               </CardContent>
             </Card>
