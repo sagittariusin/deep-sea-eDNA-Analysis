@@ -21,7 +21,7 @@ const Home = () => {
         <ImageGallery/>
         <ProcessSection/>
         <DataStats/>
-        <ProcessOverview/>
+       
         <FileUploader/>
         <Footer/>
     </div>
