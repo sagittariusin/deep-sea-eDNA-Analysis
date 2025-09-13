@@ -1,4 +1,4 @@
-// HeroSection.js
+// src/components/HeroSection.js
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Dna, Microscope, Fish } from 'lucide-react';
@@ -18,7 +18,7 @@ const Button = ({ children, className = '', variant, ...props }) => {
   );
 };
 
-// your thumbnails
+// thumbnails (your data)
 const itemsTemplate = [
   { id: 1, image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_68c1159745ea66b88978c554/4723d71c6_1.jpeg', name: 'Marine Life', section: 'map' },
   { id: 2, image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_68c1159745ea66b88978c554/7fe472bf2_4.jpeg', name: 'Birds', section: 'gallery' },
@@ -27,69 +27,69 @@ const itemsTemplate = [
 ];
 
 export default function HeroSection({ onNavigate }) {
-  // this is the full-section container used for drag constraints (like your old file)
   const containerRef = useRef(null);
-
-  // items store absolute x,y relative to containerRef's top-left
   const [items, setItems] = useState([]);
 
   // compute initial positions once (responsive)
   useEffect(() => {
-  const compute = () => {
-  const container = containerRef.current;
-  if (!container) return;
-  const rect = container.getBoundingClientRect();
-  const cw = rect.width;
-  const ch = rect.height;
+    const compute = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
 
-  // thumbnail visual size used for spacing (keep consistent with your thumbnail sizing)
-  const thumbSize = 40; // same visual size used for thumbnails
-  // move left column much further left by using a smaller fraction and small min
-  const leftX = Math.max(8, Math.round(cw * 0.02));
-  // right column unchanged
-  const rightX = Math.max(200, Math.round(cw - cw * 0.06 - 96));
+      const leftX = Math.max(8, Math.round(cw * 0.02));
+      const rightX = Math.max(200, Math.round(cw - cw * 0.06 - 96));
 
-  const computed = itemsTemplate.map((t, idx) => {
-    const isLeft = idx < 2;
+      const computed = itemsTemplate.map((t, idx) => {
+        const isLeft = idx < 2;
+        if (isLeft) {
+          const base = leftX;
+          const spread = 28;
+          const x = Math.max(4, base - (idx === 0 ? spread : Math.max(spread - 12, 8)));
+          const y = Math.round(ch * (0.22 + idx * 0.18));
+          return { ...t, position: { x, y } };
+        } else {
+          const x = rightX;
+          const y = Math.round(ch * (0.18 + (idx - 2) * 0.22));
+          return { ...t, position: { x, y } };
+        }
+      });
 
-    if (isLeft) {
-      // push the two left thumbnails progressively more left
-      // idx 0 will be the furthest left, idx 1 slightly to the right of idx 0
-      const base = leftX;
-      const spread = 28; // how much each thumbnail is offset from the base
-      // For idx 0: x = base - spread  (farthest left)
-      // For idx 1: x = base - (spread - 12) (slightly right of idx 0)
-      const x = Math.max(4, base - (idx === 0 ? spread : Math.max(spread - 12, 8)));
-      const y = Math.round(ch * (0.22 + idx * 0.18)); // small vertical tweak so they look natural
-      return { ...t, position: { x, y } };
-    } else {
-      // right column same as before
-      const x = rightX;
-      const y = Math.round(ch * (0.18 + (idx - 2) * 0.22));
-      return { ...t, position: { x, y } };
-    }
-  });
+      setItems(computed);
+    };
 
-  setItems(computed);
-};
     compute();
     window.addEventListener('resize', compute);
     return () => window.removeEventListener('resize', compute);
   }, []);
 
-  // update position in state
+  // update a single item's position
   const updatePosition = (id, x, y) => {
     setItems(prev => prev.map(p => (p.id === id ? { ...p, position: { x, y } } : p)));
   };
 
-  // helper to scroll to page sections
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
-    if (onNavigate) onNavigate(sectionId);
+  // keyboard navigation and Enter -> scroll
+  const handleKeyDown = (e, item) => {
+    const step = e.shiftKey ? 20 : 8;
+    let { x, y } = item.position || { x: 0, y: 0 };
+    if (e.key === 'ArrowUp') y -= step;
+    else if (e.key === 'ArrowDown') y += step;
+    else if (e.key === 'ArrowLeft') x -= step;
+    else if (e.key === 'ArrowRight') x += step;
+    else if (e.key === 'Enter') {
+      const el = document.getElementById(item.section);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      if (onNavigate) onNavigate(item.section);
+      return;
+    } else return;
+
+    e.preventDefault();
+    updatePosition(item.id, x, y);
   };
 
-  // onDragEnd: compute absolute coords relative to containerRef and save
+  // drag end: compute absolute coords relative to container and persist
   const handleDragEnd = (e, _info, item) => {
     const el = e.currentTarget;
     const container = containerRef.current;
@@ -107,19 +107,11 @@ export default function HeroSection({ onNavigate }) {
     updatePosition(item.id, newX, newY);
   };
 
-  // keyboard support
-  const handleKeyDown = (e, item) => {
-    const step = e.shiftKey ? 20 : 8;
-    let { x, y } = item.position;
-    if (e.key === 'ArrowUp') y -= step;
-    else if (e.key === 'ArrowDown') y += step;
-    else if (e.key === 'ArrowLeft') x -= step;
-    else if (e.key === 'ArrowRight') x += step;
-    else if (e.key === 'Enter') return scrollToSection(item.section);
-    else return;
-
-    e.preventDefault();
-    updatePosition(item.id, x, y);
+  // helper scroll
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
+    if (onNavigate) onNavigate(sectionId);
   };
 
   return (
@@ -132,7 +124,7 @@ export default function HeroSection({ onNavigate }) {
           <motion.div
             key={item.id}
             drag
-            dragConstraints={containerRef}         // same trick as your old file
+            dragConstraints={containerRef}
             dragElastic={0.14}
             dragMomentum
             whileHover={{ scale: 1.06 }}
@@ -163,7 +155,7 @@ export default function HeroSection({ onNavigate }) {
             }}
           >
             <div className="relative group pointer-events-auto">
-              <div className="w-15 h-15 md:w-20 md:h-20 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-white">
+              <div className="w-14 h-14 md:w-20 md:h-20 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-white">
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
 
@@ -209,12 +201,23 @@ export default function HeroSection({ onNavigate }) {
           </div>
         </div>
 
-        {/* Right: preview card (unchanged) */}
+        {/* Right: preview card (single video source) */}
         <div className="flex items-center justify-center">
           <div className="w-full md:w-[520px] p-6 mt-10 rounded-2xl bg-white/5 border border-white/6 backdrop-blur-md shadow-xl">
-            <img src="/images/dna.png" alt="DNA Prediction" className="w-full h-72 md:h-80 object-cover rounded-lg mb-4" />
+            <video
+              className="w-full h-72 md:h-80 object-cover rounded-lg mb-4"
+              src="/images/dnavideo.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            >
+              Your browser does not support the video tag.
+            </video>
+
             <h3 className="text-lg font-semibold text-black mb-1">DNA Prediction</h3>
-            <p className="text-sm text-black text-slate-300">
+            <p className="text-sm text-slate-500">
               Visualize predicted species & confidence from uploaded DNA barcodes.
             </p>
           </div>
@@ -222,7 +225,13 @@ export default function HeroSection({ onNavigate }) {
       </div>
 
       {/* scroll indicator */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: [0, 10, 0] }} transition={{ opacity: { delay: 1.2 }, y: { repeat: Infinity, duration: 2, ease: 'easeInOut' } }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-teal-600 cursor-pointer" onClick={() => scrollToSection('gallery')}>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: [0, 10, 0] }}
+        transition={{ opacity: { delay: 1.2 }, y: { repeat: Infinity, duration: 2, ease: 'easeInOut' } }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-teal-600 cursor-pointer"
+        onClick={() => scrollToSection('gallery')}
+      >
         <ChevronDown className="w-8 h-8" />
       </motion.div>
     </section>
