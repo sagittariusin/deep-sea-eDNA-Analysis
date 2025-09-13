@@ -283,8 +283,8 @@ const Footer: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:items-start gap-10">
           <div className="lg:w-1/3 flex-shrink-0">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-3xl font-extrabold text-yellow-400 tracking-tight">SAGITARRIUS</span>
-              <span className="text-2xl font-semibold text-white">SYSTEMS</span>
+              <span className="text-3xl font-extrabold text-yellow-400 tracking-tight">SAGITTARIUS</span>
+             
             </div>
             <p className="text-gray-300 max-w-xs">
               Advancing biodiversity science through DNA-based species identification.
